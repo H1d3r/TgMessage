@@ -14,8 +14,11 @@ export async function onRequest(context) {
         });
     }
 
-    // Default webhook URL is the current function's host + /webhook
-    const webhookUrl = url.searchParams.get('url') || `https://${url.hostname}/webhook`;
+    // Default webhook URL is the current function's host + /api/webhook for Vercel
+    // or /webhook for EdgeOne
+    const isVercel = url.hostname.includes('vercel.app') || url.hostname.includes('vercel.com');
+    const webhookPath = isVercel ? '/api/webhook' : '/webhook';
+    const webhookUrl = url.searchParams.get('url') || `https://${url.hostname}${webhookPath}`;
     
     const ret = await bot.setWebHook({ url: webhookUrl });
 
@@ -29,4 +32,4 @@ export async function onRequest(context) {
             status: 422
         });
     }
-} 
+}

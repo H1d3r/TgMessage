@@ -155,3 +155,106 @@ webhook地址为：`https://你的域名/webhook`
 浏览器窗口打开：`https://你的域名/setwebhook?key=环境变量设置的KEY&url=你的webhook地址`
 
 `code` 返回 200 就是设置成功了~
+
+---
+
+## 第三步：配置 GitHub Webhook（可选）
+
+本项目现在支持接收 GitHub Webhook 事件，并将通知发送到 Telegram Bot。以下是如何设置 GitHub Webhook：
+
+### 1. 设置环境变量
+
+在部署平台（Vercel 或 EdgeOne）中添加以下环境变量：
+
+- `github_webhook_secret`: **【建议】** GitHub Webhook 密钥，用于验证请求来源。设置为一个复杂的随机字符串。
+- `default_chat_id`: **【可选】** 默认的 Telegram Chat ID，如果不设置，则需要在请求中提供 token 参数。
+
+### 2. 配置 GitHub Webhook
+
+1. 在你的 GitHub 仓库中，进入 **Settings** -> **Webhooks** -> **Add webhook**。
+2. **Payload URL**: 填写 `https://<你的域名>/api/githubWebhook`（Vercel）或 `https://<你的域名>/githubWebhook`（EdgeOne）。
+3. **Content type**: 选择 `application/json`。
+4. **Secret**: 填入你在环境变量中设置的 `github_webhook_secret` 值。
+5. **Which events would you like to trigger this webhook?**: 选择你想要的事件，例如：
+   - **Pull requests**: 当有新的、更新或关闭的 PR 时触发
+   - **Pushes**: 当有代码推送到仓库时触发
+   - **Issues**: 当有新的、更新或关闭的 Issue 时触发
+   - **Releases**: 当有新的 Release 发布时触发
+6. 点击 **Add webhook** 保存设置。
+
+### 3. 测试 Webhook
+
+在 GitHub Webhook 设置页面，点击最近添加的 webhook，然后点击 **"Redeliver"** 按钮来测试发送一个 ping 事件。
+
+### 4. 支持的事件类型
+
+目前支持以下 GitHub 事件类型：
+
+- **pull_request**: PR 创建、更新、关闭、重新打开等
+- **push**: 代码推送到仓库
+- **issues**: Issue 创建、更新、关闭、重新打开等
+- **release**: 新版本发布
+
+### 5. 自定义 Chat ID
+
+如果你不想设置 `default_chat_id` 环境变量，也可以在 Webhook URL 中添加 token 参数：
+
+```
+https://<你的域名>/api/githubWebhook?token=<你的个人Token>
+```
+
+这样，GitHub 事件通知将发送到与该 token 关联的 Telegram 聊天。
+
+---
+
+## 故障排除
+
+### /token 命令不返回内容
+
+如果您发送 `/token` 命令到机器人但没有收到回复，请按照以下步骤进行排查：
+
+1. **检查 Webhook 设置**：
+   - 访问 `https://<你的域名>/api/debug` 查看当前 webhook 设置和环境变量状态
+   - 确保 webhook URL 正确指向 `https://<你的域名>/api/webhook`
+
+2. **重新设置 Webhook**：
+   - 访问 `https://<你的域名>/api/setWebhook?key=<你设置的key>&url=https://<你的域名>/api/webhook`
+   - 确保返回 `{ "code": 200, "message": "Webhook set to https://<你的域名>/api/webhook" }`
+
+3. **检查环境变量**：
+   - 确保已正确设置 `token`（Bot Token）
+   - 确保已正确设置 `sign_key`（加密密钥）
+   - 确保已正确设置 `key`（管理密钥）
+
+4. **检查 Bot 权限**：
+   - 确保机器人有发送消息的权限
+   - 确保你没有屏蔽机器人
+
+5. **查看日志**：
+   - 在 Vercel 或 EdgeOne 控制台查看函数日志，查找可能的错误信息
+
+### 手动测试 Webhook
+
+您可以使用 curl 命令手动测试 webhook：
+
+```bash
+curl -X POST \
+  -H "Content-Type: application/json" \
+  -d '{
+    "message": {
+      "text": "/token",
+      "chat": {
+        "id": 你的chat_id
+      }
+    }
+  }' \
+  https://<你的域名>/api/webhook
+```
+
+### 获取 Chat ID
+
+如果您不知道自己的 Chat ID，可以：
+
+1. 向机器人发送任意消息
+2. 访问 `https://api.telegram.org/bot<你的BotToken>/getUpdates`
+3. 在返回结果中找到 `message.chat.id` 字段
