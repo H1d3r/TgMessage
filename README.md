@@ -1,4 +1,5 @@
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/git/external?repository-url=https%3A%2F%2Fgithub.com%2Fanhao%2FTGMessage)
+[![Deploy to PandaStack](https://dashboard.pandastack.io/deploy-button.svg)](https://dashboard.pandastack.io/deploy?repo=anhao/TgMessage&type=static&buildCmd=npm+run+build&outputDir=dist)
 
 [![使用 EdgeOne Pages 部署](https://cdnstatic.tencentcs.com/edgeone/pages/deploy.svg)](https://edgeone.ai/pages/new?repository-url=https%3A%2F%2Fgithub.com%2Fanhao%2FTGMessage&project-name=tg-message&build-command=&install-command=&output-directory=edge_deploy&root-directory=./&env=token,sign_key&env-description=)
 
@@ -85,6 +86,7 @@ TG 消息推送机器人,基于 vercel 函数 和 Edgeone 边缘函数 搭建的
 ## 搭建教程
 ### Deploy to Vercel
 [![Deploy to Vercel](https://vercel.com/button)](https://vercel.com/new/git/external?repository-url=https%3A%2F%2Fgithub.com%2Fanhao%2FTgMessage&env=token,sign_key,key&project-name=tg-message&repo-name=tg-message&demo-title=TG%20Message&demo-url=https%3A%2F%2Ftg-message.vercel.app%2F)
+[![Deploy to PandaStack](https://dashboard.pandastack.io/deploy-button.svg)](https://dashboard.pandastack.io/deploy?repo=anhao/TgMessage&type=static&buildCmd=npm+run+build&outputDir=dist)
 ### 建立 TG 机器人
 
 1.首先关注 [BotFather](https://t.me/BotFather)
